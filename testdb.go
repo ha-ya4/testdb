@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 	"reflect"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -125,4 +127,29 @@ func DeleteTables() error {
 // DeleteFrom 引数で受け取ったテーブル名のテーブルからデータを全て削除する
 func DeleteFrom(tableName string) (sql.Result, error) {
 	return DB.Exec(fmt.Sprintf("DELETE FROM %s", tableName))
+}
+
+// RandNum 引数に指定した上限の範囲内でランダムな整数を返す
+func RandNum(limit int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(limit)
+}
+
+// RandstrFrom 文字数を引数lengthとして引数cの文字列を使ったランダムな文字列にして返す
+func RandstrFrom(length int, c string) string {
+	rand.Seed(time.Now().UnixNano())
+
+	bytes := make([]byte, length)
+	for i := range bytes {
+		n := rand.Intn(len(c))
+		bytes[i] = c[n]
+	}
+	return string(bytes)
+}
+
+const character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+// Randstr 文字数を引数lenとしてabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZをランダムに組み合わせた文字列を返す
+func Randstr(length int) string {
+	return RandstrFrom(length, character)
 }

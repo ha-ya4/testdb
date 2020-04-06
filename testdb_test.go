@@ -48,8 +48,8 @@ func TestSetup(t *testing.T) {
 
 	c := &DBConf{
 		DriverName: "postgres",
-		UserName:   "", // テストに使う設定を入れる
-		Password:   "", //
+		UserName:   "",       // テストに使う設定を入れる
+		Password:   "",       //
 		DBName:     "testdb", //
 	}
 	err := Setup(c)
