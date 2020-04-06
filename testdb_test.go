@@ -59,7 +59,7 @@ func TestSetup(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestArgDeleteFromS(t *testing.T) {
+func TestDeleteTablesFrom(t *testing.T) {
 	_, err := insert111()
 	_, err = insert222()
 	if err != nil {
@@ -77,7 +77,7 @@ func TestArgDeleteFromS(t *testing.T) {
 		"testdb_schema.test_table222",
 	}
 
-	err = DeleteFromS(tablesName)
+	err = DeleteTablesFrom(tablesName)
 	assert.NoError(t, err)
 
 	// データが削除されてsql: no rows in result setが返ってくるか
@@ -87,7 +87,7 @@ func TestArgDeleteFromS(t *testing.T) {
 	assert.Exactly(t, err, sql.ErrNoRows)
 }
 
-func TestGobalDeleteFromS(t *testing.T) {
+func TestDeleteTables(t *testing.T) {
 	_, err := insert111()
 	_, err = insert222()
 	if err != nil {
@@ -106,7 +106,7 @@ func TestGobalDeleteFromS(t *testing.T) {
 		"testdb_schema.test_table222",
 	}
 
-	err = DeleteFromS(nil)
+	err = DeleteTables()
 	assert.NoError(t, err)
 
 	// データが削除されてsql: no rows in result setが返ってくるか

@@ -45,19 +45,9 @@ func Setup(dbConf *DBConf, envPath string) error {
 	return DB.Ping()
 }
 
-// DeleteFromS 引数で受け取ったテーブル名のテーブルのデータを全て削除する。
-// テーブル名のスライスがnilならグローバル変数TablesNameの値を使う
-// 関数名の最後のSは複数という意味
-func DeleteFromS(tablesName []string) error {
+// DeleteTablesFrom 引数で受け取ったテーブル名のテーブルのデータを全て削除する。
+func DeleteTablesFrom(tablesName []string) error {
 	var err error
-
-	if len(tablesName) == 0 {
-		// グローバル変数の方をチェック
-		if len(TablesName) == 0 {
-			return ErrNoTable
-		}
-		tablesName = TablesName
-	}
 
 	for _, n := range tablesName {
 		_, err := DB.Exec(fmt.Sprintf("DELETE FROM %s", n))
@@ -67,6 +57,14 @@ func DeleteFromS(tablesName []string) error {
 	}
 
 	return err
+}
+
+// DeleteTables グローバル変数にセットされているテーブル名のテーブルデータを全て削除する
+func DeleteTables() error {
+	if len(TablesName) == 0 {
+		return ErrNoTable
+	}
+	return DeleteTablesFrom(TablesName)
 }
 
 // DeleteFrom 引数で受け取ったテーブル名のテーブルからデータを全て削除する
