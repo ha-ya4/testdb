@@ -23,15 +23,8 @@ var (
 )
 
 // Setup 指定したenvファイルからDBの接続情報を取得してDBに接続しグローバル変数DBにセットする
-func Setup(dbConf *DBConf, envPath string) error {
+func Setup(dbConf *DBConf) error {
 	var err error
-
-	if dbConf == nil {
-		dbConf, err = loadDBConf(envPath)
-		if err != nil {
-			return err
-		}
-	}
 
 	if err = dbConf.checkValue(); err != nil {
 		return err
@@ -45,31 +38,13 @@ func Setup(dbConf *DBConf, envPath string) error {
 	return DB.Ping()
 }
 
-// DeleteTablesFrom 引数で受け取ったテーブル名のテーブルのデータを全て削除する。
-func DeleteTablesFrom(tablesName []string) error {
-	var err error
-
-	for _, n := range tablesName {
-		_, err := DB.Exec(fmt.Sprintf("DELETE FROM %s", n))
-		if err != nil {
-			return err
-		}
+// SetupByEnv 指定したenvファイルからDBの接続情報を取得してDBに接続しグローバル変数DBにセットする
+func SetupByEnv(envPath string) error {
+	dbConf, err := loadDBConf(envPath)
+	if err != nil {
+		return err
 	}
-
-	return err
-}
-
-// DeleteTables グローバル変数にセットされているテーブル名のテーブルデータを全て削除する
-func DeleteTables() error {
-	if len(TablesName) == 0 {
-		return ErrNoTable
-	}
-	return DeleteTablesFrom(TablesName)
-}
-
-// DeleteFrom 引数で受け取ったテーブル名のテーブルからデータを全て削除する
-func DeleteFrom(tableName string) (sql.Result, error) {
-	return DB.Exec(fmt.Sprintf("DELETE FROM %s", tableName))
+	return Setup(dbConf)
 }
 
 // DBConf DBに接続するための設定
@@ -123,4 +98,31 @@ func (c *DBConf) checkValue() error {
 func (c *DBConf) createConf() string {
 	return fmt.Sprintf("user=%s password=%s dbname=%s", c.UserName, c.Password, c.DBName)
 
+}
+
+// DeleteTablesFrom 引数で受け取ったテーブル名のテーブルのデータを全て削除する。
+func DeleteTablesFrom(tablesName []string) error {
+	var err error
+
+	for _, n := range tablesName {
+		_, err := DB.Exec(fmt.Sprintf("DELETE FROM %s", n))
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
+}
+
+// DeleteTables グローバル変数にセットされているテーブル名のテーブルデータを全て削除する
+func DeleteTables() error {
+	if len(TablesName) == 0 {
+		return ErrNoTable
+	}
+	return DeleteTablesFrom(TablesName)
+}
+
+// DeleteFrom 引数で受け取ったテーブル名のテーブルからデータを全て削除する
+func DeleteFrom(tableName string) (sql.Result, error) {
+	return DB.Exec(fmt.Sprintf("DELETE FROM %s", tableName))
 }

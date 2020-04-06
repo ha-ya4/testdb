@@ -32,7 +32,7 @@ func select222() error {
 }
 
 func TestMain(m *testing.M) {
-	err := Setup(nil, "./test.env")
+	err := SetupByEnv("./test.env")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -46,16 +46,24 @@ func TestMain(m *testing.M) {
 func TestSetup(t *testing.T) {
 	t.Skip()
 
-	err := Setup(nil, "./test.env")
-	assert.NoError(t, err)
-
 	c := &DBConf{
 		DriverName: "postgres",
 		UserName:   "", // テストに使う設定を入れる
 		Password:   "", //
 		DBName:     "testdb", //
 	}
-	err = Setup(c, "")
+	err := Setup(c)
+	assert.NoError(t, err)
+
+	c.UserName = ""
+	err = Setup(c)
+	assert.Error(t, err)
+}
+
+func TestSetupByEnv(t *testing.T) {
+	t.Skip()
+
+	err := SetupByEnv("./test.env")
 	assert.NoError(t, err)
 }
 
